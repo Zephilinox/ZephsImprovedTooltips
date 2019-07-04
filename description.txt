@@ -1,0 +1,27 @@
+[c/ffc055:Description]
+This mod modifies and improves the tooltips in the game.
+This is a singleplayer/client-side only mod and can be used when playing on any server.
+Servers with this mod installed will send it to any clients without the mod.
+
+[c/ffc055:Features]
+- Damage per second
+- Accurate crit chance calculations for DPS
+- Accurate damage calculations for DPS
+- Attack speed, taking in to account melee speed, auto swing, and weapon attack delays
+- Attack speed also factors in how melee projectile weapons work
+- Raw knockback value displayed next to knockback strength
+
+[c/ffc055:In The Future]
+- Configuration (Enable/Disable the features you care about)
+
+[c/ffc055:Credits]
+[c/ffa400:- Zephilinox] [i/s1:2420]
+
+[c/ffc055:Changelog]
+[c/ffcc99:v0.10] Initial Release
+- Damage per second
+- Accurate crit chance calculations for DPS
+- Accurate damage calculations for DPS
+- Attack speed, taking in to account melee speed, auto swing, and weapon attack delays
+- Attack speed also factors in how melee projectile weapons work
+- Raw knockback value displayed next to knockback strength
