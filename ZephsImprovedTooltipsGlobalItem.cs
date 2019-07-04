@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using System;
+using Microsoft.Xna.Framework;
 
 namespace ZephsImprovedTooltipsGlobalItem
 {
@@ -11,6 +12,69 @@ namespace ZephsImprovedTooltipsGlobalItem
 		public ZephsImprovedTooltipsGlobalItem()
 		{
 		}
+
+        public void sellPriceTooltip(Item item, TooltipLine line)
+        {
+            int copper = (int)((item.GetStoreValue() * item.stack) / 5.0f);
+
+            if (item.type == ItemID.CopperCoin ||
+                item.type == ItemID.SilverCoin ||
+                item.type == ItemID.GoldCoin ||
+                item.type == ItemID.PlatinumCoin ||
+                copper == 0)
+            {
+                line.text = "";
+                return;
+            }
+            else
+            {
+                line.text = "Sells for ";
+            }
+
+            int plat = copper / 1000000;
+            copper %= 1000000;
+            int gold = copper / 10000;
+            copper %= 10000;
+            int silver = copper / 100;
+            copper %= 100;
+
+            if (plat > 0)
+            {
+                line.overrideColor = new Color(220, 220, 198);
+                line.text += plat + " platinum ";
+            }
+
+            if (gold > 0)
+            {
+                if (line.overrideColor == null)
+                {
+                    line.overrideColor = new Color(221, 199, 91);
+                }
+
+                line.text += gold + " gold ";
+            }
+
+            if (silver > 0)
+            {
+                if (line.overrideColor == null)
+                {
+                    line.overrideColor = new Color(181, 192, 193);
+                }
+
+                line.text += silver + " silver ";
+            }
+
+            //don't bother with copper if we have plat, makes the line too long and no one cares
+            if (plat == 0 && copper > 0)
+            {
+                if (line.overrideColor == null)
+                {
+                    line.overrideColor = new Color(246, 138, 96);
+                }
+
+                line.text += copper + " copper ";
+            }
+        }
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
@@ -87,7 +151,7 @@ namespace ZephsImprovedTooltipsGlobalItem
             for (int i = 0; i < tooltips.Count; ++i)
             {
                 TooltipLine line = tooltips[i];
-                Main.NewText(line.Name);
+
                 if (useColour && (line.Name == "Damage" ||
                     line.Name == "CritChance" ||
                     line.Name == "PickPower" ||
@@ -191,6 +255,17 @@ namespace ZephsImprovedTooltipsGlobalItem
                     }
                 }
             };
+
+            if (Main.npcShop <= 0)
+            {
+                TooltipLine line = new TooltipLine(mod, "Sell", "");
+                sellPriceTooltip(item, line);
+                
+                if (line.text != "")
+                {
+                    tooltips.Add(line);
+                }
+            }
         }
     }
 }

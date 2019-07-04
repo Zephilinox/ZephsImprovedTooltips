@@ -17,6 +17,7 @@ Enchanted Boomerang
 4 attacks per second (Very Fast)
 56 damage per second (4 from crits)
 8 knockback (Very strong)
+Sells for 1 gold
 
 [c/ffc055:Features]
 - Damage per second
@@ -25,6 +26,7 @@ Enchanted Boomerang
 - Attack speed, taking in to account weapon speed buffs, auto swing, and delays
 - Attack speed also factors in how melee projectile weapons work
 - Raw knockback value displayed next to knockback strength
+- Sell price like vanilla
 
 [c/ffc055:In The Future]
 - Configuration (Enable/Disable the features you care about)
@@ -33,6 +35,9 @@ Enchanted Boomerang
 [c/ffa400:- Zephilinox] [i/s1:2420]
 
 [c/ffc055:Changelog]
+[c/ffcc99:v0.12]
+- Added sell price, matching vanilla store
+- Fixed debug spam to chat, sorry about that 
 [c/ffcc99:v0.11] 
 - Fixed incorrect attack speed with wooden sword/lights bane
 - Reworded knockback
