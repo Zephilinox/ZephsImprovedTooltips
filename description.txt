@@ -3,11 +3,26 @@ This mod modifies and improves the tooltips in the game.
 This is a singleplayer/client-side only mod and can be used when playing on any server.
 Servers with this mod installed will send it to any clients without the mod.
 
+[c/ffcc99:Before]
+Enchanted Boomerang
+13 melee damage
+4% critical strike chance
+Very Fast speed
+Very strong knockback
+
+[c/ffcc99:After]
+Enchanted Boomerang
+13 melee damage
+4% critical strike chance
+4 attacks per second (Very Fast)
+56 damage per second (4 from crits)
+8 knockback (Very strong)
+
 [c/ffc055:Features]
 - Damage per second
 - Accurate crit chance calculations for DPS
 - Accurate damage calculations for DPS
-- Attack speed, taking in to account melee speed, auto swing, and weapon attack delays
+- Attack speed, taking in to account weapon speed buffs, auto swing, and delays
 - Attack speed also factors in how melee projectile weapons work
 - Raw knockback value displayed next to knockback strength
 
@@ -18,6 +33,13 @@ Servers with this mod installed will send it to any clients without the mod.
 [c/ffa400:- Zephilinox] [i/s1:2420]
 
 [c/ffc055:Changelog]
+[c/ffcc99:v0.11] 
+- Fixed incorrect attack speed with wooden sword/lights bane
+- Reworded knockback
+- Reworded speed
+- Knockback rounds to the first decimal place
+[c/ffcc99:v0.10.1] Icon
+- Forced an update so the icon can be uploaded
 [c/ffcc99:v0.10] Initial Release
 - Damage per second
 - Accurate crit chance calculations for DPS

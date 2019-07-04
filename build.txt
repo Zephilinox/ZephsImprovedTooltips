@@ -1,5 +1,5 @@
 author = Zephilinox
-version = 0.10
+version = 0.11
 displayName = Zeph's Improved Tooltips
 homepage = https://github.com/Zephilinox/ZephsImprovedNotifications
 side = Client
