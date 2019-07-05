@@ -25,6 +25,8 @@ Sells for 1 gold
 - Accurate damage calculations for DPS
 - Attack speed, taking in to account weapon speed buffs, auto swing, and delays
 - Attack speed also factors in how melee projectile weapons work
+- Ranged weapons use their current ammo for damage calculations
+- Ranged weapons display their current ammo
 - Raw knockback value displayed
 - Sell price on all items, like an NPC shop
 
@@ -35,6 +37,11 @@ Sells for 1 gold
 [c/ffa400:- Zephilinox] [i/s1:2420]
 
 [c/ffc055:Changelog]
+[c/ffcc99:v0.14]
+- Fixed bug introduced in v0.11 for melee projectile weapon attack speed
+- Added ranged weapon ammo calculations
+- Added current ammo being used in ranged weapon tooltip
+- Fixed DPS for pickaxes/hammers/axes
 [c/ffcc99:v0.13]
 - Fixed bug in DPS relating to player weapon damage buffs
 [c/ffcc99:v0.12]

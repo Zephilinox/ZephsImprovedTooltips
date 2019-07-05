@@ -83,7 +83,16 @@ namespace ZephsImprovedTooltipsGlobalItem
             const string endColour = useColour ? "]" : "";
             const bool colourAllPercentages = false;
 
+            bool isTool = false;
             bool firesProjectile = false;
+
+            if (item.pick > 0 ||
+                item.axe > 0 ||
+                item.hammer > 0)
+            {
+                isTool = true;
+            }
+
             if (item.melee &&
                 item.shoot > 0 &&
                 item.useAnimation <= item.useTime)
@@ -93,17 +102,61 @@ namespace ZephsImprovedTooltipsGlobalItem
                 firesProjectile = true;
             }
 
-            int speed;
-            if (firesProjectile || 
-                item.useAnimation <= 0) //Fix wooden sword/light bane/etc
+            Item ammoItem = null;
+
+            if (item.ranged && item.useAmmo != 0)
             {
-                speed = item.useTime;
+                //try ammo slots first
+                for (int i = 54; i < 58; ++i)
+                {
+                    Item pItem = Main.LocalPlayer.inventory[i];
+                    if (pItem.ammo > 0)
+                    {
+                        if (pItem.ammo == item.useAmmo && pItem.Name != "")
+                        {
+                            ammoItem = pItem;
+                            break;
+                        }
+                    }
+                }
+
+                //then any slot if not
+                if (ammoItem == null)
+                {
+                    for (int i = 0; i < Main.LocalPlayer.inventory.Length; ++i)
+                    {
+                        Item pItem = Main.LocalPlayer.inventory[i];
+                        if (pItem.ammo > 0)
+                        {
+                            if (pItem.ammo == item.useAmmo && pItem.Name != "")
+                            {
+                                ammoItem = pItem;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
-            else
+
+            int speed;
+
+            if (firesProjectile ||
+                isTool)
+            {
+                speed = item.useAnimation;
+           }
+            else if (item.useAnimation > 0 &&
+                item.useAnimation < 100)
             {
                 speed = item.useAnimation;
             }
+            else
+            {
+                speed = item.useTime;
+            }
 
+            //Main.NewText(item.ammo + ", " + item.useAmmo + ", " + Main.item[item.useAmmo].type + ", " + item.shoot + ", " + Main.projectile[item.shoot].arrow);
+            //Main.NewText(item.useTime + ", " + item.useAnimation + ", " + speed + ", " + firesProjectile + ", " + item.reuseDelay + ", " + item.autoReuse); ;
             //The crit takes in to account the currently held item, but we only care about the item we're moused over
             //Therefore, get the difference between the two and then apply it to the player's total crit later
             int critDiff = -Main.LocalPlayer.HeldItem.crit + item.crit;
@@ -112,8 +165,16 @@ namespace ZephsImprovedTooltipsGlobalItem
             float realSpeed = speed;
             //takes in to account melee damage increases
             float realDamage = 0;
+            float ammoDamage = 0;
+
+            if (ammoItem != null)
+            {
+                ammoDamage = ammoItem.damage;
+            }
+
             //the average crit damage given the total crit chance, e.g. 20 damage with 50% crit is 30 crit damage
             int critDamage = 0;
+            int critAmmoDamage = 0;
             if (item.melee)
             {
                 realSpeed *= Main.LocalPlayer.meleeSpeed;
@@ -126,6 +187,7 @@ namespace ZephsImprovedTooltipsGlobalItem
                 realDamage = item.damage * Main.LocalPlayer.rangedDamage;
                 float realCritChance = Math.Min(1, (Main.LocalPlayer.rangedCrit + critDiff) / 100.0f);
                 critDamage = (int)(realDamage * (2.0f * realCritChance));
+                critAmmoDamage = (int)(ammoDamage * (2.0f * realCritChance));
             }
             else if (item.thrown)
             {
@@ -146,7 +208,9 @@ namespace ZephsImprovedTooltipsGlobalItem
             float attacksPerSecond = 60.0f / (realSpeed > 0 ? realSpeed : 1);
             int dps = (int)(realDamage / (1.0f / attacksPerSecond));
             int dpsCrit = (int)(critDamage / (1.0f / attacksPerSecond));
-            int totalDPS = dps + dpsCrit;
+            int dpsAmmoOnly = (int)(ammoDamage / (1.0f / attacksPerSecond));
+            int dpsCritAmmoOnly = (int)(critAmmoDamage / (1.0f / attacksPerSecond));
+            int totalDPS = dps + dpsCrit; //excludes ammo
 
             for (int i = 0; i < tooltips.Count; ++i)
             {
@@ -165,15 +229,44 @@ namespace ZephsImprovedTooltipsGlobalItem
                         line.text = startColour + line.text.Substring(0, spaceIndex) +  endColour + line.text.Substring(spaceIndex, line.text.Length - spaceIndex);
                     }
                 }
+
+                if (line.Name == "Damage" && ammoDamage > 0)
+                {
+                    int spaceIndex = line.text.IndexOf(" ");
+                    if (spaceIndex >= 0)
+                    {
+                        line.text = line.text.Substring(0, spaceIndex) + "+" + ammoDamage + line.text.Substring(spaceIndex, line.text.Length - spaceIndex);
+                    }
+                }
                 else if (line.Name == "Speed")
                 {
                     //todo: come up with my own names rather than use vanilla, faster and more accurate
                     line.text = startColour + attacksPerSecond.ToString("0.#") + endColour + " attacks per second (" + line.text.Substring(0, line.text.Length - 6) + ")"; //5 = 5 in speed + space
 
-                    TooltipLine dpsLine = new TooltipLine(mod, "DPS", startColour + totalDPS + endColour + " damage per second");
-                    if (dpsCrit > 0)
+                    TooltipLine dpsLine = new TooltipLine(mod, "DPS", "");
+
+                    if (ammoDamage > 0)
                     {
-                        dpsLine.text += " (" + dpsCrit + " from crits)";
+                        dpsLine.text = startColour + totalDPS + endColour + "+" + (dpsAmmoOnly + dpsCritAmmoOnly) + " damage per second";
+                        if (dpsCrit > 0)
+                        {
+                            if (dpsCritAmmoOnly > 0)
+                            {
+                                dpsLine.text += " (" + dpsCrit + "+" + dpsCritAmmoOnly + " from crits)";
+                            }
+                            else
+                            {
+                                dpsLine.text += " (" + dpsCrit + " from crits)";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        dpsLine.text = startColour + totalDPS + endColour + " damage per second";
+                        if (dpsCrit > 0)
+                        {
+                            dpsLine.text += " (" + dpsCrit + " from crits)";
+                        }
                     }
                     tooltips.Insert(i + 1, dpsLine);
                     i++;
@@ -183,6 +276,20 @@ namespace ZephsImprovedTooltipsGlobalItem
                     if (item.knockBack > 0)
                     {
                         line.text = startColour + item.knockBack.ToString("0.#") + endColour + " knockback (" + line.text.Substring(0, line.text.Length - 10) + ")"; //10 = 9 characters in knockback + space
+                    }
+
+                    if (ammoDamage > 0)
+                    {
+                        TooltipLine l = new TooltipLine(mod, "Ammo", "");
+                        l.text = "Using " + ammoItem.Name;
+                        if (i < tooltips.Count - 1)
+                        {
+                            tooltips.Insert(i + 1, l);
+                        }
+                        else
+                        {
+                            tooltips.Add(l);
+                        }
                     }
                 }
                 else if (!line.isModifier &&
