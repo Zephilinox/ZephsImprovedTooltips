@@ -56,7 +56,6 @@ namespace ZephsImprovedTooltipsGlobalItem
         {
             int totalValue = (int)(item.GetStoreValue() / 3.0f);
 
-            Main.NewText(NPC.savedGoblin);
             if (item.maxStack > 1 || totalValue == 0 || !NPC.savedGoblin)
             {
                 line.text = "";
