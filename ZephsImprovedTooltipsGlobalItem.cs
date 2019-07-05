@@ -144,7 +144,7 @@ namespace ZephsImprovedTooltipsGlobalItem
             realSpeed += item.reuseDelay + (item.autoReuse ? -1 : 0);
             //60 ticks in a second, if realSpeed is <=0 just set it to cap at 60 per second, don't divide by 0/negative attacks per second)
             float attacksPerSecond = 60.0f / (realSpeed > 0 ? realSpeed : 1);
-            int dps = (int)(item.damage / (1.0f / attacksPerSecond));
+            int dps = (int)(realDamage / (1.0f / attacksPerSecond));
             int dpsCrit = (int)(critDamage / (1.0f / attacksPerSecond));
             int totalDPS = dps + dpsCrit;
 

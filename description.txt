@@ -25,8 +25,8 @@ Sells for 1 gold
 - Accurate damage calculations for DPS
 - Attack speed, taking in to account weapon speed buffs, auto swing, and delays
 - Attack speed also factors in how melee projectile weapons work
-- Raw knockback value displayed next to knockback strength
-- Sell price like vanilla
+- Raw knockback value displayed
+- Sell price on all items, like an NPC shop
 
 [c/ffc055:In The Future]
 - Configuration (Enable/Disable the features you care about)
@@ -35,11 +35,13 @@ Sells for 1 gold
 [c/ffa400:- Zephilinox] [i/s1:2420]
 
 [c/ffc055:Changelog]
+[c/ffcc99:v0.13]
+- Fixed bug in DPS relating to player weapon damage buffs
 [c/ffcc99:v0.12]
 - Added sell price, matching vanilla store
 - Fixed debug spam to chat, sorry about that 
 [c/ffcc99:v0.11] 
-- Fixed incorrect attack speed with wooden sword/lights bane
+- Fixed incorrect attack speed with wooden sword/light's bane
 - Reworded knockback
 - Reworded speed
 - Knockback rounds to the first decimal place
