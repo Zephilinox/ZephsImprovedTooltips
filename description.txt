@@ -28,7 +28,7 @@ Sells for 1 gold
 - Ranged weapons use their current ammo for damage calculations
 - Ranged weapons display their current ammo
 - Raw knockback value displayed
-- Sell price on all items, like an NPC shop
+- Sell price shown on all valid items
 
 [c/ffc055:In The Future]
 - Configuration (Enable/Disable the features you care about)
