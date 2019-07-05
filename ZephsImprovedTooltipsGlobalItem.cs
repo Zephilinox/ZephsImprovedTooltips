@@ -13,15 +13,75 @@ namespace ZephsImprovedTooltipsGlobalItem
 		{
 		}
 
+        public void splitValue(int totalCopper, out int plat, out int gold, out int silver, out int copper)
+        {
+            plat = totalCopper / 1000000;
+            totalCopper %= 1000000;
+            gold = totalCopper / 10000;
+            totalCopper %= 10000;
+            silver = totalCopper / 100;
+            totalCopper %= 100;
+            copper = totalCopper;
+        }
+
+        public string valueAsString(int plat, int gold, int silver, int copper)
+        {
+            string line = "";
+
+            if (plat > 0)
+            {
+                line += plat + " platinum ";
+            }
+
+            if (gold > 0)
+            {
+                line += gold + " gold ";
+            }
+
+            if (silver > 0)
+            {
+                line += silver + " silver ";
+            }
+
+            //don't bother with copper if we have plat, makes the line too long and no one cares
+            if (plat == 0 && copper > 0)
+            {
+                line += copper + " copper ";
+            }
+
+            return line;
+        }
+
+        public void reforgePriceTooltip(Item item, TooltipLine line)
+        {
+            int totalValue = (int)(item.GetStoreValue() / 3.0f);
+
+            Main.NewText(NPC.savedGoblin);
+            if (item.maxStack > 1 || totalValue == 0 || !NPC.savedGoblin)
+            {
+                line.text = "";
+                return;
+            }
+            else
+            {
+                line.text = "Reforges for ";
+                line.overrideColor = new Color(80, 140, 80);
+            }
+
+            int plat, gold, silver, copper;
+            splitValue(totalValue, out plat, out gold, out silver, out copper);
+            line.text += valueAsString(plat, gold, silver, copper);
+        }
+
         public void sellPriceTooltip(Item item, TooltipLine line)
         {
-            int copper = (int)((item.GetStoreValue() * item.stack) / 5.0f);
+            int totalValue = (int)((item.GetStoreValue() * item.stack) / 5.0f);
 
             if (item.type == ItemID.CopperCoin ||
                 item.type == ItemID.SilverCoin ||
                 item.type == ItemID.GoldCoin ||
                 item.type == ItemID.PlatinumCoin ||
-                copper == 0)
+                totalValue == 0)
             {
                 line.text = "";
                 return;
@@ -31,48 +91,25 @@ namespace ZephsImprovedTooltipsGlobalItem
                 line.text = "Sells for ";
             }
 
-            int plat = copper / 1000000;
-            copper %= 1000000;
-            int gold = copper / 10000;
-            copper %= 10000;
-            int silver = copper / 100;
-            copper %= 100;
+            int plat, gold, silver, copper;
+            splitValue(totalValue, out plat, out gold, out silver, out copper);
+            line.text += valueAsString(plat, gold, silver, copper);
 
             if (plat > 0)
             {
                 line.overrideColor = new Color(220, 220, 198);
-                line.text += plat + " platinum ";
             }
-
-            if (gold > 0)
+            else if (gold > 0)
             {
-                if (line.overrideColor == null)
-                {
-                    line.overrideColor = new Color(221, 199, 91);
-                }
-
-                line.text += gold + " gold ";
+                line.overrideColor = new Color(221, 199, 91);
             }
-
-            if (silver > 0)
+            else if (silver > 0)
             {
-                if (line.overrideColor == null)
-                {
-                    line.overrideColor = new Color(181, 192, 193);
-                }
-
-                line.text += silver + " silver ";
+                line.overrideColor = new Color(181, 192, 193);
             }
-
-            //don't bother with copper if we have plat, makes the line too long and no one cares
-            if (plat == 0 && copper > 0)
+            else
             {
-                if (line.overrideColor == null)
-                {
-                    line.overrideColor = new Color(246, 138, 96);
-                }
-
-                line.text += copper + " copper ";
+                line.overrideColor = new Color(246, 138, 96);
             }
         }
 
@@ -365,12 +402,20 @@ namespace ZephsImprovedTooltipsGlobalItem
 
             if (Main.npcShop <= 0)
             {
-                TooltipLine line = new TooltipLine(mod, "Sell", "");
-                sellPriceTooltip(item, line);
-                
+                TooltipLine line = new TooltipLine(mod, "Reforge", "");
+                reforgePriceTooltip(item, line);
+
                 if (line.text != "")
                 {
                     tooltips.Add(line);
+                }
+
+                TooltipLine line2 = new TooltipLine(mod, "Sell", "");
+                sellPriceTooltip(item, line2);
+                
+                if (line2.text != "")
+                {
+                    tooltips.Add(line2);
                 }
             }
         }

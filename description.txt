@@ -27,7 +27,8 @@ Sells for 1 gold
 - Attack speed also factors in how melee projectile weapons work
 - Ranged weapons use their current ammo for damage calculations
 - Ranged weapons display their current ammo
-- Raw knockback value displayed
+- Knockback value displayed
+- Reforge price shown on all valid items (requires goblin tinkerer)
 - Sell price shown on all valid items
 
 [c/ffc055:In The Future]
@@ -37,6 +38,8 @@ Sells for 1 gold
 [c/ffa400:- Zephilinox] [i/s1:2420]
 
 [c/ffc055:Changelog]
+[c/ffcc99:v0.15]
+- Added reforge price once the goblin tinkerer is rescued
 [c/ffcc99:v0.14]
 - Fixed bug introduced in v0.11 for melee projectile weapon attack speed
 - Added ranged weapon ammo calculations
