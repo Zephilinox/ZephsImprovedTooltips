@@ -56,7 +56,8 @@ namespace ZephsImprovedTooltipsGlobalItem
         {
             int totalValue = (int)(item.GetStoreValue() / 3.0f);
 
-            if (item.maxStack > 1 || totalValue == 0 || !NPC.savedGoblin)
+            if (item.maxStack > 1 || item.vanity || totalValue == 0 || !NPC.savedGoblin ||
+			(!item.accessory && item.defense > 0))
             {
                 line.text = "";
                 return;
@@ -251,7 +252,7 @@ namespace ZephsImprovedTooltipsGlobalItem
             for (int i = 0; i < tooltips.Count; ++i)
             {
                 TooltipLine line = tooltips[i];
-
+								
                 if (useColour && (line.Name == "Damage" ||
                     line.Name == "CritChance" ||
                     line.Name == "PickPower" ||
@@ -274,7 +275,7 @@ namespace ZephsImprovedTooltipsGlobalItem
                         line.text = line.text.Substring(0, spaceIndex) + "+" + ammoDamage + line.text.Substring(spaceIndex, line.text.Length - spaceIndex);
                     }
                 }
-                else if (line.Name == "Speed")
+                else if (line.Name == "Speed" && line.text.Length >= 6)
                 {
                     //todo: come up with my own names rather than use vanilla, faster and more accurate
                     line.text = startColour + attacksPerSecond.ToString("0.#") + endColour + " attacks per second (" + line.text.Substring(0, line.text.Length - 6) + ")"; //5 = 5 in speed + space
@@ -307,7 +308,7 @@ namespace ZephsImprovedTooltipsGlobalItem
                     tooltips.Insert(i + 1, dpsLine);
                     i++;
                 }
-                else if (line.Name == "Knockback")
+                else if (line.Name == "Knockback" && line.text.Length >= 10)
                 {
                     if (item.knockBack > 0)
                     {

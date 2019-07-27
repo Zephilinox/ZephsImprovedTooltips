@@ -17,6 +17,7 @@ Enchanted Boomerang
 4 attacks per second (Very Fast)
 56 damage per second (4 from crits)
 8 knockback (Very strong)
+Reforges for 1 gold 66 silver 66 copper
 Sells for 1 gold
 
 [c/ffc055:Features]
@@ -38,6 +39,10 @@ Sells for 1 gold
 [c/ffa400:- Zephilinox] [i/s1:2420]
 
 [c/ffc055:Changelog]
+[c/ffcc99:v0.16.0]
+- Fixed Reforge tooltip showing for Vanity items
+- Fixed Reforge tooltip showing for Armour
+- Now checks to see if some pre-defined tooltips have been changed by a mod to prevent some crashes
 [c/ffcc99:v0.15]
 - Added reforge price once the goblin tinkerer is rescued
 [c/ffcc99:v0.14]
