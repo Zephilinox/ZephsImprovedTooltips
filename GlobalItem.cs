@@ -1,14 +1,16 @@
+using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System;
-using Microsoft.Xna.Framework;
 
-namespace ZephsImprovedTooltipsGlobalItem
+namespace ZephsImprovedTooltips
 {
-	class ZephsImprovedTooltipsGlobalItem : GlobalItem
+	public class ZephsImprovedTooltipsGlobalItem : GlobalItem
 	{
+        static public Settings settings = new Settings();
+
 		public ZephsImprovedTooltipsGlobalItem()
 		{
 		}
@@ -54,19 +56,22 @@ namespace ZephsImprovedTooltipsGlobalItem
 
         public void reforgePriceTooltip(Item item, TooltipLine line)
         {
+            bool enabled = true;
+            if (settings.reforgeVisiblity == Settings.ReforgeVisibility.NeverShow
+                || (settings.reforgeVisiblity == Settings.ReforgeVisibility.ShowIfTinkererExists && !NPC.savedGoblin))
+                enabled = false;
+                
             int totalValue = (int)(item.GetStoreValue() / 3.0f);
 
-            if (item.maxStack > 1 || item.vanity || totalValue == 0 || !NPC.savedGoblin ||
-			(!item.accessory && item.defense > 0))
+            if (!enabled || item.maxStack > 1 || item.vanity || totalValue == 0
+                || (!item.accessory && item.defense > 0))
             {
                 line.text = "";
                 return;
             }
-            else
-            {
-                line.text = "Reforges for ";
-                line.overrideColor = new Color(80, 140, 80);
-            }
+
+            line.text = "Reforge price: ";
+            line.overrideColor = settings.reforgeColour;
 
             int plat, gold, silver, copper;
             splitValue(totalValue, out plat, out gold, out silver, out copper);
@@ -75,9 +80,12 @@ namespace ZephsImprovedTooltipsGlobalItem
 
         public void sellPriceTooltip(Item item, TooltipLine line)
         {
+            bool enabled = settings.sellVisibility == Settings.SellVisibility.AlwaysShow;
+
             int totalValue = (int)((item.GetStoreValue() * item.stack) / 5.0f);
 
-            if (item.type == ItemID.CopperCoin ||
+            if (!enabled ||
+                item.type == ItemID.CopperCoin ||
                 item.type == ItemID.SilverCoin ||
                 item.type == ItemID.GoldCoin ||
                 item.type == ItemID.PlatinumCoin ||
@@ -86,10 +94,8 @@ namespace ZephsImprovedTooltipsGlobalItem
                 line.text = "";
                 return;
             }
-            else
-            {
-                line.text = "Sells for ";
-            }
+
+            line.text = "Sell price: ";
 
             int plat, gold, silver, copper;
             splitValue(totalValue, out plat, out gold, out silver, out copper);
@@ -97,28 +103,34 @@ namespace ZephsImprovedTooltipsGlobalItem
 
             if (plat > 0)
             {
-                line.overrideColor = new Color(220, 220, 198);
+                line.overrideColor = settings.platColour;
             }
             else if (gold > 0)
             {
-                line.overrideColor = new Color(221, 199, 91);
+                line.overrideColor = settings.goldColour;
             }
             else if (silver > 0)
             {
-                line.overrideColor = new Color(181, 192, 193);
+                line.overrideColor = settings.silverColour;
             }
             else
             {
-                line.overrideColor = new Color(246, 138, 96);
+                line.overrideColor = settings.copperColour;
             }
+        }
+
+        public string colourAsHexString(Color colour)
+        {
+            return $"{colour.R.ToString("x2")}{colour.G.ToString("x2")}{colour.B.ToString("x2")}";
         }
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            const bool useColour = false;
-            const string startColour = useColour ? "[c/ffc055:" : "";
-            const string endColour = useColour ? "]" : "";
-            const bool colourAllPercentages = false;
+            if (!settings.enabled)
+                return;
+            
+            string startColour = settings.useHighlightColour ? $"[c/{colourAsHexString(settings.highlightColour)}:" : "";
+            string endColour = settings.useHighlightColour ? "]" : "";
 
             bool isTool = false;
             bool firesProjectile = false;
@@ -253,7 +265,7 @@ namespace ZephsImprovedTooltipsGlobalItem
             {
                 TooltipLine line = tooltips[i];
 								
-                if (useColour && (line.Name == "Damage" ||
+                if (settings.useHighlightColour && (line.Name == "Damage" ||
                     line.Name == "CritChance" ||
                     line.Name == "PickPower" ||
                     line.Name == "AxePower" ||
@@ -263,7 +275,7 @@ namespace ZephsImprovedTooltipsGlobalItem
                     int spaceIndex = line.text.IndexOf(' ');
                     if (spaceIndex >= 0)
                     {
-                        line.text = startColour + line.text.Substring(0, spaceIndex) +  endColour + line.text.Substring(spaceIndex, line.text.Length - spaceIndex);
+                        line.text = startColour + line.text.Substring(0, spaceIndex) + endColour + line.text.Substring(spaceIndex, line.text.Length - spaceIndex);
                     }
                 }
 
@@ -272,13 +284,12 @@ namespace ZephsImprovedTooltipsGlobalItem
                     int spaceIndex = line.text.IndexOf(" ");
                     if (spaceIndex >= 0)
                     {
-                        line.text = line.text.Substring(0, spaceIndex) + "+" + ammoDamage + line.text.Substring(spaceIndex, line.text.Length - spaceIndex);
+                        line.text = $"{line.text.Substring(0, spaceIndex)}+{ammoDamage + line.text.Substring(spaceIndex, line.text.Length - spaceIndex)}";
                     }
                 }
                 else if (line.Name == "Speed" && line.text.Length >= 6)
                 {
-                    //todo: come up with my own names rather than use vanilla, faster and more accurate
-                    line.text = startColour + attacksPerSecond.ToString("0.#") + endColour + " attacks per second (" + line.text.Substring(0, line.text.Length - 6) + ")"; //5 = 5 in speed + space
+                    line.text = $"{startColour + attacksPerSecond.ToString("0.#") + endColour} attacks per second ({line.text.Substring(0, line.text.Length - 6)})"; //5 = 5 in speed + space
 
                     TooltipLine dpsLine = new TooltipLine(mod, "DPS", "");
 
@@ -315,10 +326,10 @@ namespace ZephsImprovedTooltipsGlobalItem
                         line.text = startColour + item.knockBack.ToString("0.#") + endColour + " knockback (" + line.text.Substring(0, line.text.Length - 10) + ")"; //10 = 9 characters in knockback + space
                     }
 
-                    if (ammoDamage > 0)
+                    if (ammoDamage > 0 && settings.showAmmunition)
                     {
                         TooltipLine l = new TooltipLine(mod, "Ammo", "");
-                        l.text = "Using " + ammoItem.Name;
+                        l.text = "Using Ammunition " + ammoItem.Name;
                         if (i < tooltips.Count - 1)
                         {
                             tooltips.Insert(i + 1, l);
@@ -329,94 +340,37 @@ namespace ZephsImprovedTooltipsGlobalItem
                         }
                     }
                 }
-                else if (!line.isModifier &&
-                    !line.isModifierBad &&
-                    useColour &&
-                    colourAllPercentages)
-                {
-                    int numberStartIndex = -1;
-                    int numberEndIndex = -1;
-                    bool percentFound = false;
-
-                    for (int charIndex = 0; charIndex < line.text.Length; ++charIndex)
-                    {
-                        if (line.text[charIndex] == '[' ||
-                            line.text[charIndex] == ']')
-                        {
-                            //someone is using custom thingies, ignore it
-                            percentFound = false;
-                            numberStartIndex = -1;
-                            numberEndIndex = -1;
-                            continue;
-                        }
-
-                        if (numberStartIndex < 0)
-                        {
-                            if (line.text[charIndex] >= '0' || line.text[charIndex] <= '9')
-                            {
-                                numberStartIndex = charIndex;
-                            }
-                        }
-                        else if (numberEndIndex < 0)
-                        {
-                            if (line.text[charIndex] < '0' || line.text[charIndex] > '9')
-                            {
-                                numberEndIndex = charIndex;
-
-                                if (line.text[charIndex] == '%')
-                                {
-                                    if (charIndex == line.text.Length - 1 ||
-                                        line.text[charIndex + 1] == ' ' || //there's a space after the %
-                                        line.text[charIndex + 1] == '.' || //. after %
-                                        line.text[charIndex + 1] == ',' || //etc
-                                        line.text[charIndex + 1] == '\n')
-                                    {
-                                        percentFound = true;
-                                    }
-                                }
-                            }
-                        }
-
-                        if (numberEndIndex >= 0) //this character turned out to be the end
-                        {
-                            if (percentFound)
-                            {
-                                line.text = line.text.Insert(numberStartIndex, "[c/ffc055:");
-                                if (numberEndIndex == line.text.Length - 1) //no more characters, so append one
-                                {
-                                    line.text += "]";
-                                }
-                                else
-                                {
-                                    line.text = line.text.Insert(numberEndIndex + 10 + 1, "]"); //we just added 10 chars, +1 to grab %
-                                }
-                                charIndex += 11; //length of chars we adding
-                            }
-                            percentFound = false;
-                            numberStartIndex = -1;
-                            numberEndIndex = -1;
-                        }
-                    }
-                }
             };
 
+            // Player is not in an NPC's Shop
             if (Main.npcShop <= 0)
             {
-                TooltipLine line = new TooltipLine(mod, "Reforge", "");
-                reforgePriceTooltip(item, line);
-
-                if (line.text != "")
                 {
-                    tooltips.Add(line);
+                    TooltipLine line = new TooltipLine(mod, "Reforge", "");
+                    reforgePriceTooltip(item, line);
+
+                    if (line.text != "")
+                    {
+                        tooltips.Add(line);
+                    }
                 }
 
-                TooltipLine line2 = new TooltipLine(mod, "Sell", "");
-                sellPriceTooltip(item, line2);
-                
-                if (line2.text != "")
                 {
-                    tooltips.Add(line2);
+                    TooltipLine line = new TooltipLine(mod, "Sell", "");
+                    sellPriceTooltip(item, line);
+                    
+                    if (line.text != "")
+                    {
+                        tooltips.Add(line);
+                    }
                 }
+            }
+
+            if (settings.showModName && item.modItem != null)
+            {
+                string startModColour = settings.showModName ? $"[c/{colourAsHexString(settings.modColour)}:" : "";
+                string endModColour = settings.showModName ? "]" : "";
+                tooltips.Add(new TooltipLine(mod, "ModName", $"{startModColour}{item.modItem.mod.DisplayName}{endModColour}"));
             }
         }
     }

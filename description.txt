@@ -29,40 +29,47 @@ Sells for 1 gold
 - Ranged weapons use their current ammo for damage calculations
 - Ranged weapons display their current ammo
 - Knockback value displayed
-- Reforge price shown on all valid items (requires goblin tinkerer)
+- Reforge price shown on all valid items
 - Sell price shown on all valid items
-
-[c/ffc055:In The Future]
-- Configuration (Enable/Disable the features you care about)
+- The mod that an item came from is displayed
+- Configure various settings and colours
 
 [c/ffc055:Credits]
 [c/ffa400:- Zephilinox] [i/s1:2420]
 
 [c/ffc055:Changelog]
-[c/ffcc99:v0.16.0]
+[c/ffcc99:v0.17.0] 2022/01/19
+- Added various configuration settings and colours
+- Added option to highlight some key tooltip numbers
+- Added ability to show the mod that an item is from, and an option to disable it
+- Added option to enable/disable the tooltip line displaying the currently selected ammo for this weapon
+- Added option to change when the reforge information is displayed
+- Added option to change when the sell price information is displayed
+- Changed the text for the reforge and sell price, to match NPC shop text
+[c/ffcc99:v0.16.0] 2019/07/27
 - Fixed Reforge tooltip showing for Vanity items
 - Fixed Reforge tooltip showing for Armour
 - Now checks to see if some pre-defined tooltips have been changed by a mod to prevent some crashes
-[c/ffcc99:v0.15]
+[c/ffcc99:v0.15] 2019/07/05
 - Added reforge price once the goblin tinkerer is rescued
-[c/ffcc99:v0.14]
+[c/ffcc99:v0.14] 2019/07/05
 - Fixed bug introduced in v0.11 for melee projectile weapon attack speed
 - Added ranged weapon ammo calculations
 - Added current ammo being used in ranged weapon tooltip
 - Fixed DPS for pickaxes/hammers/axes
-[c/ffcc99:v0.13]
+[c/ffcc99:v0.13] 2019/07/05
 - Fixed bug in DPS relating to player weapon damage buffs
-[c/ffcc99:v0.12]
+[c/ffcc99:v0.12] 2019/07/05
 - Added sell price, matching vanilla store
 - Fixed debug spam to chat, sorry about that 
-[c/ffcc99:v0.11] 
+[c/ffcc99:v0.11] 2019/07/4
 - Fixed incorrect attack speed with wooden sword/light's bane
 - Reworded knockback
 - Reworded speed
 - Knockback rounds to the first decimal place
-[c/ffcc99:v0.10.1] Icon
+[c/ffcc99:v0.10.1] Icon - 2019/07/4
 - Forced an update so the icon can be uploaded
-[c/ffcc99:v0.10] Initial Release
+[c/ffcc99:v0.10] Initial Release - 2019/07/4
 - Damage per second
 - Accurate crit chance calculations for DPS
 - Accurate damage calculations for DPS
